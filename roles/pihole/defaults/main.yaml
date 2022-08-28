@@ -1,0 +1,8 @@
+pihole_dnscrypt:
+  ipv6: true
+  server_names:
+    - 'cloudflare'
+    - 'cloudflare-ipv6'
+  listen_addresses:
+    - '127.0.0.1:5353'
+    - '[::1]:5656'

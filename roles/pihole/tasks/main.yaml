@@ -1,0 +1,25 @@
+- name: Create docker directories
+  file:
+    path: 'pihole/etc/{{ item }}'
+    recurse: true
+    state: directory
+  loop:
+    - dnsmasq.d
+    - pihole
+    - dnscrypt-proxy
+
+- name: copy docker-compose.yaml
+  template:
+    src: docker-compose.yaml
+    dest: pihole/docker-compose.yaml
+
+- name: copy dsncrypt-proxy config file
+  template:
+    src: dnscrypt-proxy.toml
+    dest: pihole/etc/dnscrypt-proxy/dnscrypt-proxy.toml
+
+- name: Create and start pihole
+  community.docker.docker_compose:
+    project_src: pihole
+    pull: true
+  become: true

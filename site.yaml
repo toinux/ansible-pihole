@@ -1,0 +1,8 @@
+- name: pihole
+  hosts: all
+  roles:
+    - name: setup
+      become: true
+      tags: setup
+    - name: pihole
+      tags: pihole

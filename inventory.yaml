@@ -1,0 +1,12 @@
+all:
+  hosts:
+    pihole1:
+      ansible_host: 192.168.1.4
+      ansible_user: freebox
+  vars:
+    ipv6_network: "{{ (ansible_default_ipv6.address + '/' +ansible_default_ipv6.prefix) | ansible.utils.ipaddr('network/prefix') }}"
+    # see https://github.com/pi-hole/docker-pi-hole#environment-variables
+    pihole_environment:
+      WEBPASSWORD: change_me_ok
+      ADMIN_EMAIL: your@email.com
+      VIRTUAL_HOST: pihole.your.domain.com
