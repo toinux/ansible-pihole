@@ -1,0 +1,39 @@
+- name: Create gravity-sync config directory
+  ansible.builtin.file:
+    path: /etc/gravity-sync
+    mode: '0775'
+    state: directory
+  become: true
+
+- name: Git checkout gravity-sync
+  ansible.builtin.git:
+    repo: 'https://github.com/vmstan/gravity-sync.git'
+    dest: '/etc/gravity-sync/.gs'
+  become: true
+
+- name: Copy gravity-sync executable
+  ansible.builtin.copy:
+    src: /etc/gravity-sync/.gs/gravity-sync
+    remote_src: true
+    dest: /usr/local/bin/
+    mode: a+x
+  become: true
+
+- name: Copy gravity-sync config
+  ansible.builtin.template:
+    src: gravity-sync.conf
+    dest: /etc/gravity-sync/
+  become: true
+
+- name: Generate an OpenSSH keypair
+  community.crypto.openssh_keypair:
+    path: '{{ ansible_user_dir }}/.ssh/id_ssh_ed25519_gravity_sync'
+    type: ed25519
+    passphrase: ''
+  register: _ssh
+
+- name: Copy public key to remote
+  ansible.builtin.lineinfile:
+    line: '{{ _ssh.public_key }}'
+    path: '{{ gravity_remote_user_dir }}/.ssh/authorized_keys'
+  delegate_to: "{{ remote_pihole }}"

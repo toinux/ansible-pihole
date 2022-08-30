@@ -18,8 +18,36 @@
     src: dnscrypt-proxy.toml
     dest: pihole/etc/dnscrypt-proxy/dnscrypt-proxy.toml
 
+- name: Stop keepalived service
+  service:
+    name: keepalived
+    state: stopped
+  changed_when: no
+  become: true
+
 - name: Create and start pihole
   community.docker.docker_compose:
     project_src: pihole
-    pull: true
+    pull: yes
+
+- name: Start keepalived service
+  service:
+    name: keepalived
+    state: started
+  changed_when: no
+  become: true
+
+- name: Check pihole container
+  uri:
+    url: http://localhost
+  register: result
+  until: result.status == 200
+  retries: 5
+  delay: 10
+
+- name: Remove old image versions
+  community.docker.docker_prune:
+    images: yes
+    images_filters:
+      dangling: false
   become: true

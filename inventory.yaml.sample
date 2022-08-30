@@ -1,0 +1,21 @@
+all:
+  hosts:
+    pihole1:
+      ansible_host: 192.168.0.1
+      ansible_user: pihole
+      priority: 100
+      remote_pihole: pihole2
+    pihole2:
+      ansible_host: 192.168.0.2
+      ansible_user: pihole
+      priority: 99
+      remote_pihole: pihole1
+  vars:
+    pihole_vip_ipv4: 192.168.0.10/24
+    pihole_vip_ipv6: 2001:0db8:85a3::10/64
+    # see https://github.com/pi-hole/docker-pi-hole#environment-variables
+    pihole_environment:
+      WEBPASSWORD: change_me
+      ADMIN_EMAIL: change@me.com
+      VIRTUAL_HOST: change.me
+    keepalived_password: change_me

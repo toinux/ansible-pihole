@@ -1,8 +1,19 @@
 - name: pihole
   hosts: all
+  serial: 1
   roles:
     - name: setup
       become: true
       tags: setup
+    - name: keepalived
+      become: true
+      tags: keepalived
     - name: pihole
       tags: pihole
+
+# Note : do not use -l <host> with this play
+- name: gravity sync
+  hosts: all
+  roles:
+    - name: gravity-sync
+      tags: gravity-sync

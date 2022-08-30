@@ -1,0 +1,31 @@
+- name: Enable nonlocal IP binding
+  blockinfile:
+    path: /etc/sysctl.conf
+    block: |
+      net.ipv4.ip_nonlocal_bind = 1
+      net.ipv6.ip_nonlocal_bind = 1
+  notify: Reload sysctl config
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Install keepalived
+  apt:
+    force_apt_get: yes
+    name: keepalived
+
+- name: Copy check_pihole.sh
+  copy:
+    dest: /etc/keepalived/check_pihole.sh
+    src: check_pihole.sh
+    mode: 0755
+
+- name: Configure keepalived
+  template:
+    dest: /etc/keepalived/keepalived.conf
+    src: keepalived.j2
+    mode: 0644
+  notify: Restart keepalived service
+
+- name: Flush handlers
+  meta: flush_handlers

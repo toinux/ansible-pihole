@@ -1,7 +1,7 @@
 pihole_default_environment:
   TZ: 'Europe/Paris'
-  FTLCONF_LOCAL_IPV4: '{{ ansible_default_ipv4.address }}'
-  FTLCONF_REPLY_ADDR6: '{{ ansible_default_ipv6.address }}'
+  FTLCONF_LOCAL_IPV4: 0.0.0.0
+  FTLCONF_LOCAL_IPV6: "{{ pihole_vip_ipv6.split('/')[0] }}"
   PIHOLE_DNS_: "127.0.0.1#5353;::1#5656"
-  VIRTUAL_HOST: pihole.your.domain.com
+  VIRTUAL_HOST: pi.hole
   INTERFACE: '{{ ansible_default_ipv4.interface}}'
