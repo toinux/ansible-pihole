@@ -1,8 +1,18 @@
-pihole_dnscrypt:
-  ipv6: true
-  server_names:
+pihole_dnscrypt_ipv6: yes
+pihole_dnscrypt_port: 5353
+
+pihole_dnscrypt_listen_addresses: > 
+    {{
+        ['127.0.0.1:'+pihole_dnscrypt_port|string]
+      + (pihole_dnscrypt_ipv6 | bool | ternary(['[::1]:'+pihole_dnscrypt_port|string], [])) 
+    }}
+# complete list : https://dnscrypt.info/public-servers
+pihole_dnscrypt_ipv4_server_names:
     - 'cloudflare'
+pihole_dnscrypt_ipv6_server_names:
     - 'cloudflare-ipv6'
-  listen_addresses:
-    - '127.0.0.1:5353'
-    - '[::1]:5656'
+pihole_dnscrypt_server_names: >
+    {{ 
+          pihole_dnscrypt_ipv4_server_names
+        + (pihole_dnscrypt_ipv6 | bool | ternary(pihole_dnscrypt_ipv6_server_names, [])) 
+    }}

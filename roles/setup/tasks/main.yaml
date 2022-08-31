@@ -1,5 +1,5 @@
 - name: Update apt packages
-  apt:
+  ansible.builtin.apt:
     force_apt_get: yes
     autoclean: yes
     autoremove: yes
@@ -7,12 +7,12 @@
     upgrade: dist
 
 - name: Check if reboot is needed
-  stat:
+  ansible.builtin.stat:
     path: /var/run/reboot-required
   register: reboot_required
 
 - name: Install dependencies
-  apt:
+  ansible.builtin.apt:
     force_apt_get: yes
     name:
       - docker-compose
@@ -20,26 +20,25 @@
       - rsync
 
 - name: Add user to docker group
-  user:
+  ansible.builtin.user:
     name: "{{ ansible_user }}"
     append: yes
     groups: docker
 
 - name: Disable systemd-resolved stub dns
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/systemd/resolved.conf
     regexp: '^DNSStubListener='
     line: DNSStubListener=no
+  ignore_errors: yes
   register: _resolved
-  become: yes
 
 - name: Restart systemd-resolved if changed
   ansible.builtin.systemd:
     name: systemd-resolved
     state: restarted
   when: _resolved.changed
-  become: yes
 
 - name: Reboot
-  reboot:
+  ansible.builtin.reboot:
   when: reboot_required.stat.exists

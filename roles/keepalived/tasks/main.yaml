@@ -1,27 +1,28 @@
-- name: Enable nonlocal IP binding
-  blockinfile:
+- name: 'Enable nonlocal IP binding'
+  ansible.builtin.lineinfile:
     path: /etc/sysctl.conf
-    block: |
-      net.ipv4.ip_nonlocal_bind = 1
-      net.ipv6.ip_nonlocal_bind = 1
+    line: 'net.{{ item }}.ip_nonlocal_bind = 1'
+  loop:
+    - ipv4
+    - ipv6
   notify: Reload sysctl config
 
 - name: Flush handlers
   meta: flush_handlers
 
 - name: Install keepalived
-  apt:
+  ansible.builtin.apt:
     force_apt_get: yes
     name: keepalived
 
 - name: Copy check_pihole.sh
-  copy:
+  ansible.builtin.copy:
     dest: /etc/keepalived/check_pihole.sh
     src: check_pihole.sh
     mode: 0755
 
 - name: Configure keepalived
-  template:
+  ansible.builtin.template:
     dest: /etc/keepalived/keepalived.conf
     src: keepalived.j2
     mode: 0644

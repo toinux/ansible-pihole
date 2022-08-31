@@ -3,7 +3,7 @@
   serial: 1
   roles:
     - name: setup
-      become: true
+      become: yes
       tags: setup
     - name: keepalived
       become: true

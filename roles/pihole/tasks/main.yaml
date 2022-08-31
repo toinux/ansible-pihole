@@ -44,6 +44,7 @@
   until: result.status == 200
   retries: 5
   delay: 10
+  when: not ansible_check_mode
 
 - name: Remove old image versions
   community.docker.docker_prune:

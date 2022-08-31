@@ -30,7 +30,7 @@
 ## Remove the leading # first to enable this; lines starting with # are ignored.
 
 # server_names = ['scaleway-fr', 'google', 'yandex', 'cloudflare']
-server_names = {{  pihole_dnscrypt.server_names }}
+server_names = {{  pihole_dnscrypt_server_names }}
 
 
 ## List of local addresses and ports to listen to. Can be IPv4 and/or IPv6.
@@ -40,7 +40,7 @@ server_names = {{  pihole_dnscrypt.server_names }}
 ## To listen to all IPv4 addresses, use `listen_addresses = ['0.0.0.0:53']`
 ## To listen to all IPv4+IPv6 addresses, use `listen_addresses = ['[::]:53']`
 
-listen_addresses = {{ pihole_dnscrypt.listen_addresses }}
+listen_addresses = {{ pihole_dnscrypt_listen_addresses }}
 
 
 ## Maximum number of simultaneous client connections to accept
@@ -63,7 +63,7 @@ ipv4_servers = true
 
 # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
 #ipv6_servers = false
-ipv6_servers = {{  'true' if (pihole_dnscrypt.ipv6 | bool) else 'false' }}
+ipv6_servers = {{ pihole_dnscrypt_ipv6 | bool | ternary('true','false') }}
 
 # Use servers implementing the DNSCrypt protocol
 dnscrypt_servers = true
