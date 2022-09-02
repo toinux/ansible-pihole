@@ -11,7 +11,9 @@ services:
       - './etc/pihole:/etc/pihole'
       - './etc/dnsmasq.d:/etc/dnsmasq.d'
     restart: unless-stopped
-
+    # disable lighttpd bind setup, keep it listening on 0.0.0.0 as per default
+    # permits to connect to host or vip address at the same time
+    entrypoint: ['/bin/bash', '-c', 'sed -i "s/^setup_lighttpd_bind/#setup_lighttpd_bind/" /usr/local/bin/_startup.sh ; /s6-init']
   dnscrypt:
     container_name: dnscrypt-proxy
     network_mode: host
