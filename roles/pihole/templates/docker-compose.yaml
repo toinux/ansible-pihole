@@ -3,7 +3,7 @@ version: "3"
 services:
   pihole:
     container_name: pihole
-    image: pihole/pihole:latest
+    image: pihole/pihole:{{ pihole_docker_version }}
     network_mode: host
     environment:
       {{ pihole_default_environment | combine(pihole_environment) | to_nice_yaml | indent(width=6)}}
@@ -17,9 +17,9 @@ services:
   dnscrypt:
     container_name: dnscrypt-proxy
     network_mode: host
-    image: klutchell/dnscrypt-proxy:latest
+    image: klutchell/dnscrypt-proxy:{{ pihole_dnscrypt_docker_version }}
     restart: unless-stopped
     environment:
-      TZ: 'Europe/Paris'
+      TZ: '{{ (pihole_default_environment | combine(pihole_environment))["TZ"] }}'
     volumes:
       - './etc/dnscrypt-proxy/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml'

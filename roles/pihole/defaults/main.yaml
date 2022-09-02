@@ -1,7 +1,9 @@
+pihole_docker_version: latest
+pihole_dnscrypt_docker_version: latest
 pihole_dnscrypt_ipv6: yes
 pihole_dnscrypt_port: 5353
 
-pihole_dnscrypt_listen_addresses: > 
+pihole_dnscrypt_listen_addresses: >
     {{
         ['127.0.0.1:'+pihole_dnscrypt_port|string]
       + (pihole_dnscrypt_ipv6 | bool | ternary(['[::1]:'+pihole_dnscrypt_port|string], [])) 
