@@ -17,7 +17,7 @@ all:
     pihole_environment:
       WEBPASSWORD: change_me
       ADMIN_EMAIL: change@me.com
-      VIRTUAL_HOST: change.me
+      VIRTUAL_HOST: pihole.change.me
     keepalived_password: change_me
     setup_dns:
       - 8.8.8.8
