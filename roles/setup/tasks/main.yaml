@@ -31,6 +31,7 @@
       - docker-compose
       - git
       - rsync
+      - qemu-guest-agent
 
 - name: Add user to docker group
   ansible.builtin.user:
