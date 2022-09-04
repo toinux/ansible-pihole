@@ -54,6 +54,14 @@
   loop: '{{ setup_firewall_zones }}'
   notify: reload firewalld
 
+- name: Allow VRRP for keepalived
+  ansible.posix.firewalld:
+    zone: internal
+    rich_rule: rule protocol value="vrrp" accept
+    permanent: yes
+    state: enabled
+  notify: reload firewalld
+
 - name: permit pihole (dns and http)
   ansible.posix.firewalld:
     service: '{{ item }}'
