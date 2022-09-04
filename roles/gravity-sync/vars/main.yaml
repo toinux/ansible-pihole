@@ -1,3 +1,5 @@
 gravity_remote_host: "{{ hostvars[remote_pihole]['ansible_host'] }}"
 gravity_remote_user: "{{ hostvars[remote_pihole]['ansible_user'] }}"
+gravity_remote_uid: "{{ hostvars[remote_pihole]['ansible_user_uid'] }}"
+gravity_remote_gid: "{{ hostvars[remote_pihole]['ansible_user_gid'] }}"
 gravity_remote_user_dir: "{{ hostvars[remote_pihole]['ansible_facts']['user_dir'] }}"

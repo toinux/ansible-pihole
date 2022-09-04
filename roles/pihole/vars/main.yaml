@@ -5,3 +5,5 @@ pihole_default_environment:
   PIHOLE_DNS_: "127.0.0.1#{{ pihole_dnscrypt_port|string + pihole_dnscrypt_ipv6|bool|ternary(';::1#'+pihole_dnscrypt_port|string,'') }}"
   VIRTUAL_HOST: pi.hole
   INTERFACE: '{{ ansible_default_ipv4.interface}}'
+  PIHOLE_UID: '{{ ansible_user_uid }}'
+  PIHOLE_GID: '{{ ansible_user_gid }}'
