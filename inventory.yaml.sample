@@ -19,3 +19,6 @@ all:
       ADMIN_EMAIL: change@me.com
       VIRTUAL_HOST: change.me
     keepalived_password: change_me
+    setup_dns:
+      - 8.8.8.8
+      - 1.1.1.1

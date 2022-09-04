@@ -1,0 +1,2 @@
+- name: reload dhclient
+  shell: "dhclient -r; dhclient"

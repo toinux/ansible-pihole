@@ -1,3 +1,16 @@
+---
+
+# Avoid getting the VIP address from the DHCP server
+# if not available during installation
+- name: Set DNS servers
+  ansible.builtin.lineinfile:
+    line: 'supersede domain-name-servers {{ setup_dns | join(", ") }};'
+    path: /etc/dhcp/dhclient.conf
+  notify: reload dhclient
+
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: Update apt packages
   ansible.builtin.apt:
     force_apt_get: yes
@@ -24,20 +37,6 @@
     name: "{{ ansible_user }}"
     append: yes
     groups: docker
-
-- name: Disable systemd-resolved stub dns
-  ansible.builtin.lineinfile:
-    path: /etc/systemd/resolved.conf
-    regexp: '^DNSStubListener='
-    line: DNSStubListener=no
-  ignore_errors: yes
-  register: _resolved
-
-- name: Restart systemd-resolved if changed
-  ansible.builtin.systemd:
-    name: systemd-resolved
-    state: restarted
-  when: _resolved.changed
 
 - name: Reboot
   ansible.builtin.reboot:
