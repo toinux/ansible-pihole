@@ -22,3 +22,6 @@ all:
     setup_dns:
       - 8.8.8.8
       - 1.1.1.1
+    setup_firewall_zones:
+      - 192.168.0.0/16
+      - 2001:0db8:85a3::/64

@@ -32,12 +32,38 @@
       - git
       - rsync
       - qemu-guest-agent
+      - firewalld
 
 - name: Add user to docker group
   ansible.builtin.user:
     name: "{{ ansible_user }}"
     append: yes
     groups: docker
+
+- name: Set firewalld default zone to dmz
+  ansible.builtin.command: firewall-cmd --set-default-zone dmz
+  register: _cmd
+  changed_when: _cmd.stderr | length == 0
+
+- name: Allow only internal trafic
+  ansible.posix.firewalld:
+    source: '{{ item }}'
+    zone: internal
+    state: enabled
+    permanent: yes
+  loop: '{{ setup_firewall_zones }}'
+  notify: reload firewalld
+
+- name: permit pihole (dns and http)
+  ansible.posix.firewalld:
+    service: '{{ item }}'
+    zone: internal
+    permanent: yes
+    state: enabled
+  loop:
+    - dns
+    - http
+  notify: reload firewalld
 
 - name: Reboot
   ansible.builtin.reboot:

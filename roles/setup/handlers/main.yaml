@@ -1,2 +1,5 @@
 - name: reload dhclient
-  shell: "dhclient -r; dhclient"
+  ansible.builtin.shell: "dhclient -r; dhclient"
+
+- name: reload firewalld
+  ansible.builtin.command: "firewall-cmd --reload"
