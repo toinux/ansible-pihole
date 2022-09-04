@@ -5,6 +5,9 @@ services:
     container_name: pihole
     image: pihole/pihole:{{ pihole_docker_version }}
     network_mode: host
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
     environment:
       {{ pihole_default_environment | combine(pihole_environment) | to_nice_yaml | indent(width=6)}}
     volumes:
