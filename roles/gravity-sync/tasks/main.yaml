@@ -37,3 +37,9 @@
     line: '{{ _ssh.public_key }}'
     path: '{{ gravity_remote_user_dir }}/.ssh/authorized_keys'
   delegate_to: "{{ remote_pihole }}"
+
+- name: Add remote to known_hosts
+  ansible.builtin.known_hosts:
+    name: "{{ gravity_remote_host }}"
+    hash_host: yes
+    key: "{{ lookup('ansible.builtin.pipe', 'ssh-keyscan -H -t ecdsa ' + gravity_remote_host) }}"
