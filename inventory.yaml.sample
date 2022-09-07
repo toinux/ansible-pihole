@@ -16,7 +16,6 @@ all:
     # see https://github.com/pi-hole/docker-pi-hole#environment-variables
     pihole_environment:
       WEBPASSWORD: change_me
-      ADMIN_EMAIL: change@me.com
       VIRTUAL_HOST: pihole.change.me
     keepalived_password: change_me
     setup_dns:
