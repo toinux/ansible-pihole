@@ -39,7 +39,7 @@
 
 - name: Check pihole container
   uri:
-    url: http://localhost
+    url: http://localhost/admin/login.php
   register: result
   until: result.status == 200
   retries: 5
