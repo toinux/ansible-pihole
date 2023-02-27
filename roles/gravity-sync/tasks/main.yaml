@@ -19,6 +19,13 @@
     mode: a+x
   become: true
 
+- name: Disable buggy gravity-sync sudo check
+  ansible.builtin.replace:
+    path: /usr/local/bin/gravity-sync
+    regexp: '^    validate_sudo_status'
+    replace: '#   validate_sudo_status'
+  become: true
+
 - name: Copy gravity-sync config
   ansible.builtin.template:
     src: gravity-sync.conf
