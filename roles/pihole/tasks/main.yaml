@@ -23,12 +23,15 @@
     - nebula-primary.txt
     - nebula-replicas.txt
   when: priority == 100
+  no_log: true
 
 
 - name: copy docker-compose.yaml
   template:
     src: docker-compose.yaml
     dest: pihole/docker-compose.yaml
+    mode: '0600'
+  no_log: true
 
 - name: copy dsncrypt-proxy config file
   template:
@@ -42,17 +45,20 @@
   changed_when: no
   become: true
 
-- name: Create and start pihole
-  community.docker.docker_compose:
-    project_src: pihole
-    pull: yes
-
-- name: Start keepalived service
-  service:
-    name: keepalived
-    state: started
-  changed_when: no
-  become: true
+- name: Update pihole stack
+  block:
+    - name: Create and start pihole
+      community.docker.docker_compose_v2:
+        project_src: pihole
+        pull: always
+      no_log: true
+  always:
+    - name: Start keepalived service
+      service:
+        name: keepalived
+        state: started
+      changed_when: no
+      become: true
 
 - name: Check pihole container
   uri:
@@ -63,9 +69,19 @@
   delay: 10
   when: not ansible_check_mode
 
+- name: Wait for Pi-hole to become healthy
+  ansible.builtin.command: docker inspect -f {{ '{{' }}.State.Health.Status{{ '}}' }} pihole
+  register: pihole_health
+  changed_when: false
+  until: pihole_health.stdout == 'healthy'
+  retries: 12
+  delay: 5
+  when: not ansible_check_mode
+
 - name: Remove old image versions
   community.docker.docker_prune:
     images: yes
     images_filters:
       dangling: false
   become: true
+  tags: prune

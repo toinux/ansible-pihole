@@ -34,6 +34,23 @@
       - qemu-guest-agent
       - firewalld
 
+- name: Create Docker CLI plugins directory
+  ansible.builtin.file:
+    path: /usr/local/lib/docker/cli-plugins
+    state: directory
+    mode: '0755'
+  register: compose_plugin_directory
+  tags: compose_plugin
+
+- name: Install Docker Compose plugin
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/download/v2.39.1/docker-compose-linux-{{ ansible_facts['architecture'] }}"
+    checksum: "sha256:https://github.com/docker/compose/releases/download/v2.39.1/docker-compose-linux-{{ ansible_facts['architecture'] }}.sha256"
+    dest: /usr/local/lib/docker/cli-plugins/docker-compose
+    mode: '0755'
+  when: not (ansible_check_mode and compose_plugin_directory.changed)
+  tags: compose_plugin
+
 - name: Add user to docker group
   ansible.builtin.user:
     name: "{{ ansible_user }}"

@@ -1,4 +1,5 @@
 pihole_docker_version: latest
+pihole_environment: {}
 pihole_dnscrypt_docker_version: latest
 pihole_dnscrypt_ipv6: yes
 pihole_dnscrypt_port: 5353

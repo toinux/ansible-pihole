@@ -21,8 +21,7 @@ mise install
 ```
 
 The Ansible package includes the collections listed in `requirements.yaml`.
-The playbook still uses the removed Docker Compose v1 module; it must be
-migrated to Compose v2 before it can run with this Ansible version.
+The setup role installs the Docker Compose v2 plugin on the servers.
 
 # Installation
 
