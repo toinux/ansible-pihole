@@ -4,7 +4,6 @@
 - [dnscryp-proxy](https://dnscrypt.info), [with docker](https://registry.hub.docker.com/r/klutchell/dnscrypt-proxy)
 - failover with keepalived
 - firewalld
-- replication with [gravity-sync](https://github.com/vmstan/gravity-sync/) (to finish) 
 
 # Requirements
 ## Servers
@@ -14,23 +13,16 @@ Ubuntu would need adaptation with systemd-resolved
 
 ## Ansible
 
-https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+Install the versions in `mise.toml` with [mise](https://mise.jdx.dev/):
 
 ```shell
-python3 -m pip install --user ansible
-```
-or
-```shell
-sudo apt-add-repository ppa:ansible/ansible
-sudo apt update
-sudo apt install ansible
+mise trust
+mise install
 ```
 
-Then install required modules :
-
-```shell
-ansible-galaxy install -r requirements.yaml
-```
+The Ansible package includes the collections listed in `requirements.yaml`.
+The playbook still uses the removed Docker Compose v1 module; it must be
+migrated to Compose v2 before it can run with this Ansible version.
 
 # Installation
 
@@ -38,9 +30,3 @@ Copy `inventory.yaml.sample` to `inventory.yaml` and adjust settings
 ```shell
 ansible-playbook -i inventory.yaml -D site.yaml
 ```
-
-# TODO
-
-## Gravity-sync
-
-Add first initialization and cron

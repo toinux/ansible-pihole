@@ -4,9 +4,26 @@
     recurse: true
     state: directory
   loop:
-    - dnsmasq.d
     - pihole
     - dnscrypt-proxy
+
+- name: Create secrets directory
+  file:
+    path: 'pihole/secrets'
+    state: directory
+    mode: '0700'
+  when: priority == 100
+
+- name: Deploy nebula-sync secrets
+  template:
+    src: 'secrets/{{ item }}.j2'
+    dest: 'pihole/secrets/{{ item }}'
+    mode: '0400'
+  loop:
+    - nebula-primary.txt
+    - nebula-replicas.txt
+  when: priority == 100
+
 
 - name: copy docker-compose.yaml
   template:
@@ -39,7 +56,7 @@
 
 - name: Check pihole container
   uri:
-    url: http://localhost/admin/login.php
+    url: http://localhost/admin/login
   register: result
   until: result.status == 200
   retries: 5

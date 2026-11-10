@@ -12,11 +12,8 @@ services:
       {{ pihole_default_environment | combine(pihole_environment) | to_nice_yaml | indent(width=6)}}
     volumes:
       - './etc/pihole:/etc/pihole'
-      - './etc/dnsmasq.d:/etc/dnsmasq.d'
     restart: unless-stopped
-    # disable lighttpd bind setup, keep it listening on 0.0.0.0 as per default
-    # permits to connect to host or vip address at the same time
-    entrypoint: ['/bin/bash', '-c', 'sed -i "s/^setup_lighttpd_bind/#setup_lighttpd_bind/" /usr/local/bin/_startup.sh ; /s6-init']
+
   dnscrypt:
     container_name: dnscrypt-proxy
     network_mode: host
@@ -26,3 +23,27 @@ services:
       TZ: '{{ (pihole_default_environment | combine(pihole_environment))["TZ"] }}'
     volumes:
       - './etc/dnscrypt-proxy/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml'
+
+{% if priority == 100 %}
+  nebula-sync:
+    container_name: nebula-sync
+    image: ghcr.io/lovelaze/nebula-sync:{{ pihole_nebula_sync_docker_version }}
+    restart: unless-stopped
+    user: '{{ ansible_user_uid }}:{{ ansible_user_gid }}'
+    secrets:
+      - nebula_primary
+      - nebula_replicas
+    environment:
+      TZ: '{{ (pihole_default_environment | combine(pihole_environment))["TZ"] }}'
+      PRIMARY_FILE: /run/secrets/nebula_primary
+      REPLICAS_FILE: /run/secrets/nebula_replicas
+      FULL_SYNC: '{{ pihole_nebula_sync_full_sync | string }}'
+      RUN_GRAVITY: '{{ pihole_nebula_sync_run_gravity | string }}'
+      CRON: '{{ pihole_nebula_sync_cron }}'
+      {{ pihole_nebula_sync_selective | to_nice_yaml | indent(width=6) }}
+secrets:
+  nebula_primary:
+    file: './secrets/nebula-primary.txt'
+  nebula_replicas:
+    file: './secrets/nebula-replicas.txt'
+{% endif %}
