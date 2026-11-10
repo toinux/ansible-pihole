@@ -4,14 +4,34 @@
     recurse: true
     state: directory
   loop:
-    - dnsmasq.d
     - pihole
     - dnscrypt-proxy
+
+- name: Create secrets directory
+  file:
+    path: 'pihole/secrets'
+    state: directory
+    mode: '0700'
+  when: priority == 100
+
+- name: Deploy nebula-sync secrets
+  template:
+    src: 'secrets/{{ item }}.j2'
+    dest: 'pihole/secrets/{{ item }}'
+    mode: '0400'
+  loop:
+    - nebula-primary.txt
+    - nebula-replicas.txt
+  when: priority == 100
+  no_log: true
+
 
 - name: copy docker-compose.yaml
   template:
     src: docker-compose.yaml
     dest: pihole/docker-compose.yaml
+    mode: '0600'
+  no_log: true
 
 - name: copy dsncrypt-proxy config file
   template:
@@ -25,25 +45,37 @@
   changed_when: no
   become: true
 
-- name: Create and start pihole
-  community.docker.docker_compose:
-    project_src: pihole
-    pull: yes
-
-- name: Start keepalived service
-  service:
-    name: keepalived
-    state: started
-  changed_when: no
-  become: true
+- name: Update pihole stack
+  block:
+    - name: Create and start pihole
+      community.docker.docker_compose_v2:
+        project_src: pihole
+        pull: always
+      no_log: true
+  always:
+    - name: Start keepalived service
+      service:
+        name: keepalived
+        state: started
+      changed_when: no
+      become: true
 
 - name: Check pihole container
   uri:
-    url: http://localhost/admin/login.php
+    url: http://localhost/admin/login
   register: result
   until: result.status == 200
   retries: 5
   delay: 10
+  when: not ansible_check_mode
+
+- name: Wait for Pi-hole to become healthy
+  ansible.builtin.command: docker inspect -f {{ '{{' }}.State.Health.Status{{ '}}' }} pihole
+  register: pihole_health
+  changed_when: false
+  until: pihole_health.stdout == 'healthy'
+  retries: 12
+  delay: 5
   when: not ansible_check_mode
 
 - name: Remove old image versions
@@ -52,3 +84,4 @@
     images_filters:
       dangling: false
   become: true
+  tags: prune

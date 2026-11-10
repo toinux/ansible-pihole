@@ -1,4 +1,5 @@
 pihole_docker_version: latest
+pihole_environment: {}
 pihole_dnscrypt_docker_version: latest
 pihole_dnscrypt_ipv6: yes
 pihole_dnscrypt_port: 5353
@@ -18,3 +19,18 @@ pihole_dnscrypt_server_names: >
           pihole_dnscrypt_ipv4_server_names
         + (pihole_dnscrypt_ipv6 | bool | ternary(pihole_dnscrypt_ipv6_server_names, [])) 
     }}
+
+pihole_nebula_sync_docker_version: latest
+pihole_nebula_sync_cron: "*/15 * * * *"
+pihole_nebula_sync_full_sync: false
+pihole_nebula_sync_run_gravity: true
+pihole_nebula_sync_selective:
+  SYNC_GRAVITY_GROUP: 'true'
+  SYNC_GRAVITY_AD_LIST: 'true'
+  SYNC_GRAVITY_AD_LIST_BY_GROUP: 'true'
+  SYNC_GRAVITY_DOMAIN_LIST: 'true'
+  SYNC_GRAVITY_DOMAIN_LIST_BY_GROUP: 'true'
+  SYNC_GRAVITY_CLIENT: 'true'
+  SYNC_GRAVITY_CLIENT_BY_GROUP: 'true'
+  SYNC_GRAVITY_DHCP_LEASES: 'false'   # chaque nœud garde son propre bail DHCP si tu l'utilises
+  SYNC_CONFIG_DEBUG: 'false'

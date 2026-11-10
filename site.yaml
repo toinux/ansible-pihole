@@ -10,10 +10,3 @@
       tags: keepalived
     - name: pihole
       tags: pihole
-
-# Note : do not use -l <host> with this play
-- name: gravity sync
-  hosts: all
-  roles:
-    - name: gravity-sync
-      tags: gravity-sync
